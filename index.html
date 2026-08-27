@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GLANCE: Gaze-Locomotion Integration for Active Humanoid Navigation</title>
+<style>
+  :root { --ink: #1a1a1a; --muted: #666; --accent: #b03030; --rule: #e5e5e5; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, 'Times New Roman', serif; color: var(--ink);
+         line-height: 1.55; background: #fff; }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
+  header { text-align: center; padding: 56px 0 8px; }
+  h1 { font-size: 1.9rem; font-weight: normal; line-height: 1.25; }
+  .authors { margin-top: 14px; color: var(--muted); font-size: 1.02rem; }
+  .affil { color: var(--muted); font-size: .92rem; margin-top: 4px; }
+  .buttons { margin: 22px 0 10px; }
+  .buttons a { display: inline-block; margin: 4px 6px; padding: 7px 18px;
+    border: 1px solid var(--ink); border-radius: 20px; color: var(--ink);
+    text-decoration: none; font-family: Helvetica, Arial, sans-serif;
+    font-size: .9rem; }
+  .buttons a:hover { background: var(--ink); color: #fff; }
+  .claim { font-style: italic; color: var(--muted); margin: 10px auto 0;
+           max-width: 700px; }
+  h2 { font-size: 1.3rem; font-weight: normal; margin: 48px 0 14px;
+       padding-top: 14px; border-top: 1px solid var(--rule); }
+  p { margin: 10px 0; }
+  video, img.fig { width: 100%; border-radius: 6px; display: block; }
+  .caption { font-size: .88rem; color: var(--muted); margin: 8px 0 0;
+             font-family: Helvetica, Arial, sans-serif; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+           margin-top: 12px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0;
+          font-family: Helvetica, Arial, sans-serif; font-size: .88rem; }
+  .tablewrap { overflow-x: auto; }
+  th, td { padding: 6px 10px; text-align: center; border-bottom: 1px solid var(--rule); }
+  th { border-bottom: 2px solid var(--ink); }
+  td:first-child, th:first-child { text-align: left; }
+  .best { font-weight: bold; }
+  pre { background: #f6f6f6; border: 1px solid var(--rule); border-radius: 6px;
+        padding: 14px; overflow-x: auto; font-size: .82rem; margin-top: 12px; }
+  .negative { border-left: 3px solid var(--accent); padding-left: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>GLANCE: Gaze-Locomotion Integration for Active Humanoid Navigation in Cluttered Environments</h1>
+  <!-- AUTHOR LIST TBD (page is not anonymous; publish timing per double-anonymous rules — never linked from the submission PDF) -->
+  <div class="authors">Author list to be added</div>
+  <div class="affil">Affiliations to be added</div>
+  <div class="buttons">
+    <a href="#">Paper (soon)</a><a href="#">arXiv (soon)</a><a href="#bibtex">BibTeX</a>
+  </div>
+  <p class="claim">One transformer learns where to look and where to step:
+  goal-directed humanoid navigation in clutter with a physically actuated neck
+  &mdash; no planner, no maps, depth only.</p>
+</header>
+
+<video src="videos/hero_fog.mp4" poster="videos/hero_fog.jpg"
+       autoplay muted loop playsinline preload="none" loading="lazy"></video>
+<p class="caption">The active-gaze student exploring a five-room house it has
+never mapped. The floor plan is revealed only by what the robot's own camera
+has seen &mdash; there is no map, no planner, and no state estimator beyond
+the policy's 2&nbsp;s of context; the counter tracks how much of the house its
+gaze has uncovered while it walks between goals.</p>
+
+<h2>Abstract</h2>
+<p>Humanoids that navigate real clutter must decide where to look and where to
+step at the same time. We train a single transformer policy for the IHMC Alex
+humanoid that couples locomotion with a physically actuated 2-DoF neck:
+goal-conditioned navigation emerges end-to-end from goal rewards, and active
+gaze emerges with it &mdash; without any explicit information-seeking
+objective. A privileged raycast teacher trained in 4096 parallel environments
+is distilled into a student that sees only rendered ZED-camera depth.
+On a five-tier clutter suite (flat, boxes, pillars, doorways, overhangs),
+goal-directed learning roughly triples a velocity-commanded scripted baseline,
+and directed gaze is the decisive ingredient in exactly the places geometry
+hides: parametric probes show the active student crosses 0.8&nbsp;m doorways
+where its fixed-camera twin &mdash; identical in every other respect &mdash;
+almost never does.</p>
+
+<h2>Method</h2>
+<img class="fig" src="figures/arch.png" alt="Architecture" loading="lazy">
+<p class="caption">A single transformer consumes proprioception, FOV-masked
+depth, and the goal command, and emits leg, arm, and neck actions in one
+action stream. The neck is a real actuated joint pair &mdash; where the robot
+looks is a learned motor decision, not a crop or attention weight. Teachers
+perceive via FOV-masked raycast (fast enough for 4096-env PPO); students
+inherit the same policy over rendered ZED X Mini depth via distillation with a
+DAgger term.</p>
+
+<h2>Sight, and directing it, are worth the most where geometry hides</h2>
+<div class="tablewrap"><table>
+<tr><th>Arm</th><th>overall</th><th>flat</th><th>boxes</th><th>pillars</th><th>doorway</th><th>overhang</th></tr>
+<tr><td>scripted velocity drive</td><td>23.6</td><td>42.3</td><td>25.2</td><td>28.4</td><td>14.9</td><td>18.3</td></tr>
+<tr><td>blind (learned, no vision)</td><td>39.3</td><td>79.6</td><td>56.1</td><td>47.5</td><td>26.3</td><td>27.8</td></tr>
+<tr><td>fixed camera</td><td>69.7</td><td>82.6</td><td>61.1</td><td>80.9</td><td>71.8</td><td>56.6</td></tr>
+<tr><td class="best">active gaze</td><td class="best">73.4</td><td>82.3</td><td>57.2</td><td>77.8</td><td class="best">75.8</td><td class="best">60.8</td></tr>
+</table></div>
+<img class="fig" src="figures/results.png" alt="Per-tier results" loading="lazy">
+<p class="caption">Goal-reach success (%) by terrain tier, uniform final-checkpoint
+protocol, teachers. On flat ground blind and sighted are indistinguishable; on
+doorways and overhangs sighted arms triple the blind numbers. Every failure in
+the protocol is a contact crash &mdash; there are zero timeouts &mdash; so the
+gaps measure obstacle perception, not speed.</p>
+
+<h2>Seeing is not crossing: a controlled A/B</h2>
+<div class="grid2">
+  <div>
+    <video src="videos/ab_active.mp4" poster="videos/ab_active.jpg"
+           muted loop playsinline preload="none" controls loading="lazy"></video>
+    <p class="caption"><b>Active student</b> &mdash; 25 goals, 10 falls, 0 deadlocks.</p>
+  </div>
+  <div>
+    <video src="videos/ab_fixed.mp4" poster="videos/ab_fixed.jpg"
+           muted loop playsinline preload="none" controls loading="lazy"></video>
+    <p class="caption"><b>Fixed-camera student</b> &mdash; 18 goals, 28 falls, 7 deadlocks;
+    every pre-retry fall is at a doorway.</p>
+  </div>
+</div>
+<p>The two students are skill-matched twins on the overall benchmark (0.503 vs
+0.500) and differ only in whether the neck moves. In the same house, on the
+same goals, the fixed-camera student reaches doorways &mdash; its camera has
+even revealed the rooms beyond &mdash; and falls <i>in</i> the aperture.
+Seeing the gap is not the same as crossing it.</p>
+
+<h2>A capability map, not a universal win</h2>
+<img class="fig" src="figures/capmap_doorway.png" alt="Doorway probe curves" loading="lazy">
+<img class="fig" src="figures/capmap_hazards.png" alt="Hazard probe curves" loading="lazy">
+<p class="caption">Crossing reliability from parametric single-hazard probes
+(20 forced transits per point) across a causal ladder: no vision &rarr;
+undirected vision &rarr; directed vision. Shaded bands mark what the tiered
+benchmark already samples &mdash; the ladder separates hardest <i>below</i>
+them.</p>
+<p>Directed gaze provides a geometry-dependent benefit rather than a universal
+navigation improvement. It is decisive for lateral clearance (doorway crossing
+0.55 vs 0.21 fixed / 0.18 blind; pillar gaps 0.48 vs 0.18/0.14), much weaker
+in sustained sub-metre corridors (0.22 vs 0.03), and absent for vertical
+clearance. Notably, an undirected camera is nearly worthless for constrained
+transits &mdash; on featureless doorways it is <i>worse</i> than no vision at
+all.</p>
+<div class="grid2">
+  <div>
+    <video src="videos/door_active.mp4" poster="videos/door_active.jpg"
+           muted loop playsinline preload="none" controls loading="lazy"></video>
+    <p class="caption">Active student threading a 0.8&nbsp;m doorway flanked by
+    clutter, scanning the aperture edges on approach.</p>
+  </div>
+  <div>
+    <video src="videos/door_fixed.mp4" poster="videos/door_fixed.jpg"
+           muted loop playsinline preload="none" controls loading="lazy"></video>
+    <p class="caption">Fixed-camera student at a bare 0.8&nbsp;m doorway
+    (0/20 crossings): its pitched-down camera cannot localize a featureless
+    gap; it drifts along the wall.</p>
+  </div>
+</div>
+
+<h2 class="negative">What it cannot do (yet)</h2>
+<p>We report the boundaries as carefully as the wins.</p>
+<div class="grid2">
+  <div>
+    <video src="videos/loco_curb.mp4" poster="videos/loco_curb.jpg"
+           muted loop playsinline preload="none" controls loading="lazy"></video>
+    <p class="caption">In capability: isolated elevation changes &mdash; a
+    15&nbsp;cm curb is crossed 17/20, up and down.</p>
+  </div>
+  <div>
+    <video src="videos/loco_stair.mp4" poster="videos/loco_stair.jpg"
+           muted loop playsinline preload="none" controls loading="lazy"></video>
+    <p class="caption">Out of capability: stairs. It sees the treads (gaze
+    samples cover them) and falls at the first riser &mdash; a stride-scale
+    locomotion limit, not a perception failure.</p>
+  </div>
+</div>
+<p>Two further honest negatives. The learned gaze is <i>lateral</i>: across
+every policy, camera elevation never rises above &minus;24&deg; on approach to
+an overhead hazard &mdash; no policy ever looks up, so vertical clearance is
+invisible by construction (pitch-active perception is a concrete future
+direction). And descending geometry is untrained: the policy climbs a
+10&deg; ramp cleanly and falls on the way down, every attempt.</p>
+
+<h2 id="bibtex">BibTeX</h2>
+<pre>@inproceedings{glance2027,
+  title     = {GLANCE: Gaze-Locomotion Integration for Active Humanoid
+               Navigation in Cluttered Environments},
+  author    = {Author list to be added},
+  booktitle = {Under review},
+  year      = {2027}
+}</pre>
+
+</div>
+</body>
+</html>
