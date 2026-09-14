@@ -67,18 +67,30 @@ has seen. There is no map, no planner, and no state estimator beyond
 the policy's 2&nbsp;s of context.</p>
 
 <h2>Abstract</h2>
-<p>Humanoids that navigate real clutter must decide where to look and where to
-step at the same time. We train a single transformer policy for the IHMC Alex
-humanoid that couples locomotion with a physically actuated 2-DoF neck:
-goal-conditioned navigation emerges end-to-end from goal rewards, and active
-gaze emerges with it &mdash; without any explicit information-seeking
-objective. A privileged raycast teacher trained in 4096 parallel environments
-is distilled into a student that sees only rendered ZED-camera depth.
-On a five-tier clutter suite (flat, boxes, pillars, doorways, overhangs),
-goal-directed learning roughly triples a velocity-commanded scripted baseline,
-and directed gaze is the decisive ingredient in exactly the places geometry
-hides: parametric probes show the active student crosses 0.8&nbsp;m doorways
-where its fixed-camera twin which is identical in every other respect almost never does.</p>
+<p>As general-purpose humanoid robots begin operating in environments designed
+for humans, they must navigate unstructured indoor scenes with objects scattered
+on the floor, low-hanging obstacles, tight passages, and doorways without
+collisions. Traditional pipelines solve this problem by separating perception,
+planning, and control and executing them in sequence. In addition, they either
+rely on prebuilt maps or reconstruct them online even before the robot can move.
+However, in real-world settings, we need a reactive, whole-body system that can
+actively perceive the environments to overcome narrow, limited field of view to
+avoid collisions. We introduce GLANCE, a unified visuomotor policy for
+geometry-aware humanoid navigation in cluttered environments. Given a 2D goal
+location and depth images from the head and chest cameras, a single causal
+transformer policy directly predicts 29-DoF joint-space actions for whole-body
+control. We train GLANCE entirely in simulation with Reinforcement Learning on
+terrains built with everyday obstacles like doorways, boxes, pillars, and
+overhangs in NVIDIA Isaac Lab. When evaluated in simulation experiments across
+16 multi-room houses sampled from the ProcTHOR-10K validation dataset (2,200
+point-to-point legs), GLANCE demonstrates that a robot with an actuated neck
+reaches its goal on the first try 70% of the time, versus 48% for the same
+robot with an identical fixed head policy. On narrow doorways where the width
+is below the training range, an active neck crosses 55% of the time versus 21%
+for a fixed neck. We show that active gaze coordinated with arm placement,
+torso adjustment, and gait modulation emerges on a humanoid from goal-reaching
+and fall-avoidance pressure alone, without designing explicit reward functions
+for perception.</p>
 
 <h2>Method</h2>
 <img class="fig" src="figures/arch.png" alt="Architecture" loading="lazy">
