@@ -130,11 +130,10 @@ gaps measure obstacle perception, not speed.</p> -->
     every pre-retry fall is at a doorway.</p>
   </div>
 </div>
-<p>The two students are skill-matched twins on the overall benchmark (0.503 vs
-0.500) and differ only in whether the neck moves. In the same house, on the
-same goals, the fixed-camera student reaches doorways whose far rooms its
-camera has already revealed, and falls <i>in</i> the aperture.
-Seeing the gap is not the same as crossing it.</p>
+<p>The active neck and fixed neck policies perform similarly on the overall benchmark (0.503 vs 0.500). 
+But in a new environment, although the fixed neck policy can see through the doorways, 
+it still fails to pass through them. The active neck policy learns to coordinate its arms, 
+torso, and gait to pass through narrow doorways just from gaze.</p>
 
 <h2>A capability map</h2>
 <img class="fig" src="figures/capmap_doorway.png" alt="Doorway probe curves" loading="lazy">
@@ -144,13 +143,12 @@ Seeing the gap is not the same as crossing it.</p>
 undirected vision &rarr; directed vision. Shaded bands mark what the tiered
 benchmark already samples; the ladder separates hardest <i>below</i>
 them.</p>
-<p>Directed gaze provides a geometry-dependent benefit rather than a universal
-navigation improvement. It is decisive for lateral clearance (doorway crossing
-0.55 vs 0.21 fixed / 0.18 blind; pillar gaps 0.48 vs 0.18/0.14), much weaker
-in sustained sub-metre corridors (0.22 vs 0.03), and absent for vertical
-clearance. Notably, an undirected camera is nearly worthless for constrained
-transits; on featureless doorways it is <i>worse</i> than no vision at
-all.</p>
+<p>The benefit is largest when crossing doorways (0.55 vs. 0.21 fixed / 0.18 blind) and moving 
+through gaps between pillars (0.48 vs. 0.18 / 0.14). The improvement is smaller in narrow 
+corridors (0.22 vs. 0.03) and disappears for obstacles that require judging vertical clearance. 
+Interestingly, simply having a camera is not enough for these tight passages: on simple doorways, 
+the fixed-camera policy actually performs <i>worse</i> than the blind policy.
+</p>
 <div class="grid2">
   <div>
     <video src="videos/door_active.mp4" poster="videos/door_active.jpg"
