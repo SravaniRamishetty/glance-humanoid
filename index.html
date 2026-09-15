@@ -54,17 +54,16 @@
   <div class="buttons">
     <a href="#">Paper (soon)</a><a href="#">arXiv (soon)</a><a href="#bibtex">BibTeX</a>
   </div>
-  <p class="claim">One transformer learns where to look and where to step:
+  <!-- <p class="claim">One transformer learns where to look and where to step:
   goal-directed humanoid navigation in clutter with a physically actuated neck
-  &mdash; no planner, no maps, depth only.</p>
+  &mdash; no planner, no maps, depth only.</p> -->
 </header>
 
 <video src="videos/hero_fog.mp4" poster="videos/hero_fog.jpg"
        autoplay muted loop playsinline preload="none" loading="lazy"></video>
-<p class="caption">The active-gaze student exploring a five-room house it has
-never mapped. The floor plan is revealed only by what the robot's own camera
-has seen. There is no map, no planner, and no state estimator beyond
-the policy's 2&nbsp;s of context.</p>
+<p class="caption">The active-gaze policy on a 29-DoF humanoid with an actuated neck exploring a multi-room house it has never mapped. 
+The floor plan is revealed only by what the robot's own camera has seen. There is no map, no planner, 
+and no state estimator beyond the policy's 2&nbsp;s of context.</p>
 
 <h2>Abstract</h2>
 <p>As general-purpose humanoid robots begin operating in environments designed
@@ -77,9 +76,9 @@ However, in real-world settings, we need a reactive, whole-body system that can
 actively perceive the environments to overcome narrow, limited field of view to
 avoid collisions. We introduce GLANCE, a unified visuomotor policy for
 geometry-aware humanoid navigation in cluttered environments. Given a 2D goal
-location and depth images from the head and chest cameras, a single causal
-transformer policy directly predicts 29-DoF joint-space actions for whole-body
-control. We train GLANCE entirely in simulation with Reinforcement Learning on
+location, robot proprioception and depth images from the head and chest cameras,
+a single causal transformer policy directly predicts 29-DoF joint-space actions for 
+whole-body control. We train GLANCE entirely in simulation with Reinforcement Learning on
 terrains built with everyday obstacles like doorways, boxes, pillars, and
 overhangs in NVIDIA Isaac Lab. When evaluated in simulation experiments across
 16 multi-room houses sampled from the ProcTHOR-10K validation dataset (2,200
@@ -110,12 +109,12 @@ DAgger term.</p>
 <tr><td>fixed camera</td><td>69.7</td><td>82.6</td><td>61.1</td><td>80.9</td><td>71.8</td><td>56.6</td></tr>
 <tr><td class="best">active gaze</td><td class="best">73.4</td><td>82.3</td><td>57.2</td><td>77.8</td><td class="best">75.8</td><td class="best">60.8</td></tr>
 </table></div>
-<img class="fig" src="figures/results.png" alt="Per-tier results" loading="lazy">
+<!-- <img class="fig" src="figures/results.png" alt="Per-tier results" loading="lazy">
 <p class="caption">Goal-reach success (%) by terrain tier, uniform final-checkpoint
 protocol, teachers. On flat ground blind and sighted are indistinguishable; on
 doorways and overhangs sighted arms triple the blind numbers. Every failure in
 the protocol is a contact crash and there are zero timeouts, so the
-gaps measure obstacle perception, not speed.</p>
+gaps measure obstacle perception, not speed.</p> -->
 
 <h2>Seeing is not crossing: a controlled A/B</h2>
 <div class="grid2">
